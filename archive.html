@@ -7,7 +7,939 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800;900&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
+<style>
+/* ============================================================
+   JIANG YISHAN — CREATIVE INTELLIGENCE ARCHIVE
+   设计系统 v2：更通透的暗色档案 + 丰富 hover 动效
+   ============================================================ */
+
+:root {
+  --bg: #0e0e12;
+  --bg-soft: #15151c;
+  --bg-hover: #1c1c26;
+  --ink: #f5f4f1;
+  --ink-dim: #b0afba;
+  --ink-faint: #6e6d7a;
+  --line: rgba(245, 244, 241, 0.12);
+  --line-soft: rgba(245, 244, 241, 0.06);
+  --acc: #9d7af7;
+  --acc-dim: rgba(157, 122, 247, 0.18);
+  --acc-glow: rgba(157, 122, 247, 0.35);
+  --c-aigc: #9d7af7;
+  --c-brand: #e8d98a;
+  --c-app: #f2b05e;
+  --c-ip: #a2d4f5;
+  --c-intern: #a8e0af;
+  --font-disp: 'Archivo', 'Noto Sans SC', sans-serif;
+  --font-body: 'Archivo', 'Noto Sans SC', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Noto Sans SC', monospace;
+  --pad: clamp(48px, 7vw, 96px);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur: 0.6s;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* 极简全局背景 */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(157,122,247,0.04) 0%, transparent 60%);
+}
+
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+
+::selection { background: var(--acc); color: #fff; }
+
+.wrap {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding-left: var(--pad);
+  padding-right: var(--pad);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------------- 顶导航 ---------------- */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--line-soft);
+  background: rgba(14, 14, 18, 0.82);
+  backdrop-filter: blur(12px);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+.nav-logo {
+  font-family: var(--font-disp);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  transition: letter-spacing 0.4s var(--ease);
+}
+.nav-logo:hover { letter-spacing: 0.12em; }
+.nav-logo sup { color: var(--acc); font-size: 9px; }
+.nav-links { display: flex; align-items: center; gap: clamp(16px, 3vw, 40px); }
+.nav-links a {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  padding: 6px 2px;
+  border-bottom: 1px solid transparent;
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease), letter-spacing 0.3s var(--ease);
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute; bottom: -1px; left: 0;
+  width: 100%; height: 1px;
+  background: var(--acc);
+  transform: scaleX(0); transform-origin: right;
+  transition: transform 0.4s var(--ease);
+}
+.nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
+.nav-links a:hover, .nav-links a.active { color: var(--ink); }
+.nav-links a:focus-visible, button:focus-visible, a:focus-visible {
+  outline: 1px solid var(--acc);
+  outline-offset: 3px;
+}
+.lang-btn {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  padding: 6px 14px;
+  transition: border-color 0.3s var(--ease), color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.lang-btn:hover { border-color: var(--acc); color: var(--acc); box-shadow: 0 0 18px var(--acc-dim); }
+
+/* ---------------- Hero ---------------- */
+.hero {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: start;
+  gap: clamp(24px, 4vw, 64px);
+  padding-top: 120px;
+  padding-bottom: 60px;
+  position: relative;
+}
+.hero-tags { display: flex; flex-direction: column; gap: 4px; margin-bottom: clamp(20px, 3vh, 40px); }
+.hero-tags span {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 1vw, 13px);
+  letter-spacing: 0.22em;
+  color: var(--ink-dim);
+}
+.hero-tags span:first-child { color: var(--acc); }
+.hero-name {
+  font-family: var(--font-disp);
+  font-weight: 900;
+  font-size: clamp(100px, 20vw, 380px);
+  line-height: 0.78;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.hero-name .hero-row1,
+.hero-name .row2 {
+  display: block;
+}
+.hero-name .row2 { margin-left: clamp(8px, 1.5vw, 32px); color: transparent; -webkit-text-stroke: 1.5px var(--ink); }
+.hero-intro {
+  max-width: 46ch;
+  margin-top: clamp(20px, 3vh, 40px);
+  color: var(--ink-dim);
+  font-size: clamp(15px, 1.2vw, 18px);
+}
+.hero-ctas { display: flex; flex-wrap: wrap; gap: 16px; margin-top: clamp(24px, 4vh, 48px); }
+.btn {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  padding: 14px 28px;
+  border: 1px solid var(--line);
+  transition: background 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease), transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+}
+.btn-solid { background: var(--acc); border-color: var(--acc); color: #fff; }
+.btn-solid:hover { transform: translateY(-2px); }
+.btn-ghost:hover { border-color: var(--acc); color: var(--acc); transform: translateY(-2px); }
+
+/* Creative Archive Cloud —— refero 风格演化 */
+.cloud {
+  position: relative;
+  height: clamp(360px, 62vh, 620px);
+  border-left: 1px solid var(--line-soft);
+  overflow: hidden;
+}
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: var(--line-soft);
+}
+.cloud::before { left: 0; right: 0; top: 50%; height: 1px; }
+.cloud::after { top: 0; bottom: 0; left: 50%; width: 1px; }
+.cloud-label {
+  position: absolute;
+  top: 12px; right: 0;
+  color: var(--ink-faint);
+}
+.cloud-frag {
+  position: absolute;
+  animation: float 9s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(1.5deg); }
+}
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(-2deg); }
+}
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.6; }
+}
+.frag-img {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bg-soft);
+  transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease), transform 0.4s var(--ease);
+}
+.frag-img:hover {
+  border-color: var(--acc);
+  transform: scale(1.03);
+}
+.frag-img img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+.frag-chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-dim);
+  border: 1px solid var(--line);
+  padding: 5px 10px;
+  background: var(--bg);
+  white-space: nowrap;
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.frag-chip:hover { color: var(--acc); border-color: var(--acc); box-shadow: 0 0 12px var(--acc-dim); }
+.frag-chip.purple { color: var(--acc); border-color: rgba(157, 122, 247, 0.45); }
+.frag-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-faint);
+  letter-spacing: 0.14em;
+}
+.frag-cross { width: 18px; height: 18px; position: absolute; }
+.frag-cross::before, .frag-cross::after { content: ''; position: absolute; background: var(--ink-faint); }
+.frag-cross::before { left: 50%; top: 0; bottom: 0; width: 1px; }
+.frag-cross::after { top: 50%; left: 0; right: 0; height: 1px; }
+
+/* refero 风格几何碎片 */
+.frag-geo {
+  position: absolute;
+  border: 1px solid var(--line);
+  opacity: 0.3;
+  animation: floatSlow 12s ease-in-out infinite;
+}
+.frag-geo.triangle {
+  width: 0; height: 0;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-bottom: 24px solid var(--acc);
+  opacity: 0.15;
+  animation: floatSlow 14s ease-in-out infinite;
+}
+.frag-geo.circle {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--acc);
+  opacity: 0.2;
+  animation: floatSlow 10s ease-in-out infinite;
+}
+.frag-geo.rect {
+  width: 40px; height: 20px;
+  border: 1px solid var(--line);
+  opacity: 0.18;
+  animation: floatSlow 16s ease-in-out infinite;
+}
+.frag-geo.dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--acc);
+  opacity: 0.35;
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+.frag-line {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line), transparent);
+  opacity: 0.4;
+}
+
+/* ---------------- 通用板块 ---------------- */
+.section { padding: clamp(100px, 16vh, 200px) 0; border-top: 1px solid var(--line-soft); }
+.sec-head { display: flex; align-items: baseline; gap: clamp(16px, 2vw, 32px); margin-bottom: clamp(40px, 6vh, 80px); }
+.sec-num { font-family: var(--font-mono); font-size: 13px; color: var(--acc); letter-spacing: 0.14em; }
+.sec-title {
+  font-family: var(--font-disp);
+  font-weight: 900;
+  font-size: clamp(40px, 6.5vw, 104px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.sec-zh { font-size: clamp(14px, 1.2vw, 18px); color: var(--ink-dim); margin-left: auto; }
+
+/* ---------------- Selected Works（编辑式节奏布局） ---------------- */
+.work { display: grid; gap: clamp(20px, 3vw, 48px); margin-bottom: clamp(120px, 18vh, 220px); align-items: end; }
+.work:last-child { margin-bottom: 0; }
+.work-media { overflow: hidden; background: var(--bg-soft); border: 1px solid var(--line-soft); position: relative; }
+.work-media img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.8s var(--ease);
+}
+.work:hover .work-media img { transform: scale(1.03); }
+.work-media::after {
+  content: attr(data-cat);
+  position: absolute;
+  left: 16px; top: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink);
+  background: rgba(14, 14, 18, 0.7);
+  border: 1px solid var(--line);
+  padding: 5px 10px;
+}
+.work-info { display: flex; flex-direction: column; gap: 14px; }
+.work-num {
+  font-family: var(--font-mono);
+  font-size: clamp(40px, 4vw, 64px);
+  color: transparent;
+  -webkit-text-stroke: 1px var(--ink-faint);
+  line-height: 1;
+}
+.work-title {
+  font-family: var(--font-disp);
+  font-weight: 800;
+  font-size: clamp(28px, 3.4vw, 56px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+.work-sub { color: var(--ink-dim); font-size: 15px; }
+.work-meta {
+  display: flex; flex-wrap: wrap; gap: 8px 24px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--ink-faint); letter-spacing: 0.06em;
+}
+.work-value { color: var(--ink-dim); font-size: 15px; max-width: 52ch; }
+.work-keys { display: flex; flex-wrap: wrap; gap: 8px; }
+.key {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+  border: 1px solid var(--line); padding: 5px 10px; color: var(--ink-dim);
+  text-transform: uppercase;
+  transition: border-color 0.3s var(--ease), color 0.3s var(--ease), background 0.3s var(--ease);
+}
+.key:hover { border-color: var(--acc); color: var(--ink); background: var(--acc); }
+.work-link {
+  font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.08em;
+  color: var(--ink); width: fit-content;
+  border-bottom: 1px solid var(--acc);
+  padding-bottom: 4px;
+  transition: color 0.3s var(--ease), letter-spacing 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.work-link:hover { color: var(--acc); letter-spacing: 0.14em; border-color: var(--acc); }
+
+/* 统一交替构图 */
+.work { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; }
+.work:nth-child(even) { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+.work:nth-child(even) .work-media { order: -1; }
+.work .work-media { aspect-ratio: 16 / 10; }
+
+/* ---------------- Workflow ---------------- */
+.flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; border-left: 1px solid var(--line-soft); }
+.flow-step {
+  padding: 24px 20px 32px;
+  border-right: 1px solid var(--line-soft);
+  border-top: 1px solid transparent;
+  position: relative;
+  transition: background 0.4s var(--ease), transform 0.4s var(--ease);
+}
+.flow-step:hover { background: var(--bg-hover); transform: translateY(-4px); }
+.flow-step::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 1px;
+  background: var(--acc);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.5s var(--ease);
+}
+.flow-step:hover::before { transform: scaleX(1); }
+.flow-num { font-family: var(--font-mono); font-size: 11px; color: var(--acc); letter-spacing: 0.12em; display: block; margin-bottom: 14px; }
+.flow-t { font-weight: 700; font-size: 15px; margin-bottom: 8px; }
+.flow-d { color: var(--ink-faint); font-size: 12.5px; line-height: 1.55; }
+
+/* ---------------- 数字文件袋 ---------------- */
+.envs { display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(12px, 1.5vw, 24px); }
+.env {
+  --eacc: var(--acc);
+  position: relative;
+  border: 1px solid var(--line);
+  border-top: none;
+  padding: 44px 18px 18px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  transition: border-color 0.4s var(--ease), transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+}
+.env:hover, .env.open {
+  border-color: var(--eacc);
+  transform: translateY(-4px);
+}
+.env-flap {
+  position: absolute;
+  top: -14px; left: -1px; right: -1px;
+  height: 30px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  transform: rotate(-2.4deg);
+  transform-origin: left bottom;
+  transition: transform 0.55s var(--ease), border-color 0.4s var(--ease);
+}
+.env:hover .env-flap, .env.open .env-flap {
+  transform: rotate(-7deg) translateY(-5px);
+  border-color: var(--eacc);
+}
+.env-num {
+  font-family: var(--font-mono);
+  font-size: 12px; letter-spacing: 0.14em;
+  color: var(--ink-faint);
+  transition: color 0.35s var(--ease);
+}
+.env:hover .env-num, .env.open .env-num { color: var(--eacc); }
+.env-name {
+  font-family: var(--font-disp);
+  font-weight: 800;
+  font-size: clamp(17px, 1.35vw, 22px);
+  line-height: 1.15;
+  text-transform: uppercase;
+  margin-top: 10px;
+  transition: color 0.35s var(--ease);
+}
+.env:hover .env-name, .env.open .env-name { color: var(--eacc); }
+.env-count { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faint); letter-spacing: 0.12em; margin-top: 6px; text-transform: uppercase; }
+.env-view { margin-top: auto; height: 130px; overflow: hidden; padding-top: 18px; }
+.env-thumbs {
+  display: flex; gap: 8px;
+  transform: translateY(115%);
+  transition: transform 0.55s var(--ease);
+}
+.env:hover .env-thumbs, .env.open .env-thumbs { transform: translateY(0); }
+.env-thumb {
+  flex: 1;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--line-soft);
+  background: var(--bg-soft);
+  transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
+}
+.env-thumb:hover { border-color: var(--eacc); transform: scale(1.05); }
+.env-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.env-hint { font-family: var(--font-mono); font-size: 9px; color: var(--ink-faint); letter-spacing: 0.1em; margin-top: 12px; text-transform: uppercase; }
+
+/* ---------------- About Preview / About ---------------- */
+.about-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(24px, 4vw, 80px); align-items: start; }
+.about-photo {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bg-soft);
+  position: relative;
+}
+.about-photo img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.6s var(--ease), filter 0.6s var(--ease);
+  filter: grayscale(0.15) contrast(1.05);
+}
+.about-photo:hover img { transform: scale(1.03); filter: grayscale(0) contrast(1.08); }
+.about-photo.todo {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-faint);
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em;
+}
+.about-lead {
+  font-family: var(--font-disp);
+  font-weight: 700;
+  font-size: clamp(22px, 2.4vw, 36px);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.about-block { margin-top: 36px; }
+.about-block h3 { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; color: var(--acc); text-transform: uppercase; margin-bottom: 14px; }
+.about-block p { color: var(--ink-dim); max-width: 62ch; }
+.caps { display: flex; flex-wrap: wrap; gap: 8px; }
+.caps li {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em;
+  border: 1px solid var(--line); padding: 7px 12px; color: var(--ink-dim);
+  transition: border-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+.caps li:hover { border-color: var(--acc); color: var(--acc); }
+
+/* ---------------- Experience ---------------- */
+.exp {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 5fr);
+  gap: clamp(32px, 4vw, 64px);
+  padding: clamp(48px, 6vh, 80px) 0;
+  border-top: 1px solid var(--line-soft);
+  transition: background 0.4s var(--ease);
+}
+.exp:hover { background: rgba(245,244,241,0.02); }
+.exp:last-child { border-bottom: 1px solid var(--line-soft); }
+.exp-thumb { aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid var(--line-soft); background: var(--bg-soft); }
+.exp-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.exp-body { display: flex; flex-direction: column; gap: 18px; }
+.exp-company { font-family: var(--font-disp); font-weight: 800; font-size: clamp(32px, 3.5vw, 56px); transition: color 0.3s var(--ease); line-height: 1.05; letter-spacing: -0.02em; }
+.exp:hover .exp-company { color: var(--acc); }
+.exp-meta { display: flex; flex-wrap: wrap; gap: 8px 32px; font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.08em; }
+.exp-duties { display: flex; flex-wrap: wrap; gap: 10px; }
+.exp-duties .key { font-size: 11px; padding: 7px 14px; }
+
+/* ---------------- Contact ---------------- */
+.contact { text-align: left; }
+.contact-title {
+  font-family: var(--font-disp);
+  font-weight: 900;
+  font-size: clamp(56px, 11vw, 180px);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.contact-title .arrow { color: var(--acc); }
+.contact-sub { color: var(--ink-dim); margin-top: 24px; font-size: clamp(15px, 1.2vw, 18px); }
+.contact-rows { margin-top: 40px; border-top: 1px solid var(--line-soft); }
+.contact-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 0; border-bottom: 1px solid var(--line-soft);
+  font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.08em;
+  color: var(--ink-dim);
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.contact-row:hover { color: var(--ink); border-color: var(--acc); }
+.footer {
+  padding: 32px 0 40px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--ink-faint); letter-spacing: 0.08em;
+  display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+
+/* ---------------- 项目详情页 ---------------- */
+.pj-hero { padding: clamp(140px, 20vh, 220px) 0 clamp(48px, 8vh, 96px); }
+.pj-num { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.16em; }
+.pj-title {
+  font-family: var(--font-disp);
+  font-weight: 900;
+  font-size: clamp(44px, 8vw, 128px);
+  line-height: 0.95; letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin-top: 18px;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+.pj-sub { color: var(--ink-dim); font-size: clamp(16px, 1.5vw, 22px); margin-top: 16px; }
+.pj-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  padding: 28px 0;
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+  margin-top: 40px;
+}
+.pj-meta dt { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; color: var(--ink-faint); text-transform: uppercase; margin-bottom: 8px; }
+.pj-meta dd { font-size: 14px; color: var(--ink); }
+.pj-keys { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.pj-value {
+  font-family: var(--font-disp); font-weight: 700;
+  font-size: clamp(20px, 2.2vw, 32px); line-height: 1.3;
+  max-width: 34ch;
+  margin-top: 40px;
+}
+.pj-section { padding: clamp(48px, 8vh, 96px) 0; border-top: 1px solid var(--line-soft); }
+.pj-h2 { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; color: var(--acc); text-transform: uppercase; margin-bottom: 28px; }
+.pj-outline { columns: 2; column-gap: 48px; }
+.pj-outline li {
+  break-inside: avoid;
+  display: flex; gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 14.5px; color: var(--ink-dim);
+}
+.pj-outline .idx { font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); padding-top: 2px; }
+.pj-board { border: none; background: var(--bg-soft); overflow: visible; line-height: 0; margin: 0; }
+.pj-board + .pj-board { margin-top: -1px; }
+.pj-board img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+}
+.pj-note {
+  border: 1px dashed var(--line);
+  padding: 24px;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--ink-faint); letter-spacing: 0.06em;
+  line-height: 2;
+}
+.pj-note b { color: var(--acc); font-weight: 400; }
+.pj-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: clamp(40px, 6vh, 80px) 0;
+  border-top: 1px solid var(--line-soft);
+}
+.pj-next { font-family: var(--font-disp); font-weight: 800; font-size: clamp(22px, 3vw, 44px); text-transform: uppercase; transition: color 0.3s var(--ease); }
+.pj-next:hover { color: var(--acc); }
+.pj-next small { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--ink-faint); font-weight: 400; margin-bottom: 8px; }
+
+/* ---------- 项目详情页视频网格 ---------- */
+.pj-video-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+.pj-video-item video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+  background: var(--bg-soft);
+}
+.pj-video-label {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+/* ---------- 项目标题多行 ---------- */
+.pj-title-line {
+  display: block;
+}
+
+/* SplitText 相关样式 */
+.split-parent { display: inline-block; overflow: hidden; }
+.split-char, .split-word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+.split-line { overflow: hidden; display: block; }
+
+/* TODO 标记 */
+.todo { color: var(--ink-faint); }
+.todo::before { content: ''; display: inline-block; width: 6px; height: 6px; border: 1px solid var(--acc); margin-right: 8px; vertical-align: 2px; }
+
+/* ---------------- 动效（克制、300–600ms） ---------------- */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* ---------------- 响应式 ---------------- */
+@media (max-width: 1100px) {
+  .envs { grid-template-columns: repeat(3, 1fr); }
+  .flow { grid-template-columns: repeat(3, 1fr); }
+  .flow-step { border-bottom: 1px solid var(--line-soft); }
+}
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; padding-top: 120px; min-height: auto; padding-bottom: 64px; }
+  .cloud { height: 320px; border-left: none; border-top: 1px solid var(--line-soft); margin-top: 32px; }
+  .work--b, .work--c, .work--d { grid-template-columns: 1fr; margin-left: 0; }
+  .work--c .work-info { order: 0; }
+  .work--a .work-media { aspect-ratio: 16 / 10; }
+  .about-grid, .exp { grid-template-columns: 1fr; }
+  .envs { grid-template-columns: 1fr 1fr; }
+  .flow { grid-template-columns: 1fr 1fr; }
+  .pj-outline { columns: 1; }
+  .pj-video-grid { grid-template-columns: 1fr; }
+  .nav-links { gap: 14px; }
+  .nav-links a { font-size: 10px; }
+}
+@media (max-width: 520px) {
+  .envs { grid-template-columns: 1fr; }
+  .flow { grid-template-columns: 1fr; }
+  .hero-name { font-size: clamp(64px, 18vw, 96px); }
+}
+
+/* ---------------- 动效降级 ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal { opacity: 1; transform: none; }
+  .env-thumbs { transform: none; }
+  .split-char, .split-word { opacity: 1 !important; transform: none !important; }
+}
+
+/* ============================================================
+   v2 追加样式：About 排版 / Galaxy / PhotonCursor 光标 / StrokeText / FoldText
+   ============================================================ */
+
+/* ---------- About 新排版 ---------- */
+.about-lead {
+  font-family: var(--font-disp);
+  font-weight: 800;
+  font-size: clamp(26px, 3.2vw, 48px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.about-bio {
+  color: var(--ink-dim);
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.75;
+  max-width: 58ch;
+  margin-top: 24px;
+}
+.about-caps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+.about-caps .key {
+  font-size: clamp(13px, 1.2vw, 17px);
+  padding: 10px 20px;
+  letter-spacing: 0.08em;
+}
+
+/* ---------- Galaxy 粒子云 ---------- */
+#galaxyCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+/* ---------- PhotonCursor 光标（细微发光 + 光电感，克制精致） ---------- */
+#photon-cursor {
+  --pc: 165 92% 62%;            /* 荧光绿 */
+  --pc-soft: 165 92% 74%;
+  --pc-cold: 205 92% 74%;       /* 冷白（点击时短暂过渡） */
+  position: fixed;
+  inset: 0;
+  pointer-events: none;         /* 关键：绝不阻挡任何点击 / 输入 */
+  z-index: 9999;
+  mix-blend-mode: screen;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+#photon-cursor.is-hidden { opacity: 0; }
+
+/* 中心 4px 高亮光点 */
+.pc-dot {
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: hsl(var(--pc-soft));
+  box-shadow: 0 0 5px 0 hsl(var(--pc) / 0.55);
+  opacity: 0;
+}
+#photon-cursor.pc-active .pc-dot {
+  box-shadow: 0 0 8px 0 hsl(var(--pc) / 0.8);
+}
+
+/* 外层 20px 半透明细线圆环 */
+.pc-ring {
+  position: absolute;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 1px solid hsl(var(--pc) / 0.38);
+  box-shadow: 0 0 6px 0 hsl(var(--pc) / 0.18);
+  opacity: 0;
+}
+
+/* 悬停：圆环平滑放大至 30px + 短暂「电流扫描」（单次，不持续闪烁） */
+#photon-cursor.pc-active .pc-ring {
+  border-color: hsl(var(--pc) / 0.55);
+  box-shadow: 0 0 9px 0 hsl(var(--pc) / 0.26);
+}
+#photon-cursor.pc-active .pc-ring::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  border-top-color: hsl(var(--pc-soft) / 0.9);
+  animation: pc-scan 0.5s linear 1;
+}
+@keyframes pc-scan {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* 移动残影：短光点，200ms 内淡出 */
+.pc-trail {
+  position: absolute;
+  width: 3px; height: 3px;
+  margin: -1.5px 0 0 -1.5px;
+  border-radius: 50%;
+  background: hsl(var(--pc-soft) / 0.8);
+  box-shadow: 0 0 4px 0 hsl(var(--pc) / 0.5);
+  opacity: 0;
+  pointer-events: none;
+}
+.pc-trail.on {
+  animation: pc-trail-fade 0.2s ease-out forwards;
+}
+@keyframes pc-trail-fade {
+  from { opacity: 0.5; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.4); }
+}
+
+/* 点击：圆环快速缩小→恢复（一次脉冲，约 220ms） */
+#photon-cursor.pc-pulse .pc-ring { animation: pc-ring-pulse 0.22s ease-out 1; }
+@keyframes pc-ring-pulse {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(0.72); }
+  100% { transform: scale(1); }
+}
+
+/* 点击：向外扩散并淡出的细线圆环（约 300ms） */
+.pc-pulse-ring {
+  position: absolute;
+  width: 20px; height: 20px;
+  margin: -10px 0 0 -10px;
+  border-radius: 50%;
+  border: 1px solid hsl(var(--pc-cold) / 0.7);
+  opacity: 0;
+  pointer-events: none;
+}
+.pc-pulse-ring.on { animation: pc-ripple 0.3s ease-out forwards; }
+@keyframes pc-ripple {
+  from { opacity: 0.6; transform: scale(0.9); }
+  to   { opacity: 0; transform: scale(1.9); }
+}
+
+/* 减少动态：关闭脉冲 / 扫描 / 残影动画，仅保留静态跟随 */
+@media (prefers-reduced-motion: reduce) {
+  #photon-cursor.pc-pulse .pc-ring,
+  #photon-cursor.pc-active .pc-ring::after,
+  .pc-trail.on,
+  .pc-pulse-ring.on { animation: none !important; }
+}
+
+/* ---------- StrokeText ---------- */
+.stroke-text-svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+.stroke-text-svg text {
+  font-family: var(--font-disp);
+  font-weight: 900;
+  text-transform: uppercase;
+  fill: none;
+  stroke: var(--acc);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.stroke-text-svg .stroke-fill {
+  fill: var(--ink);
+  stroke: none;
+  opacity: 0;
+}
+
+/* ---------- FoldText ---------- */
+.fold-text {
+  display: inline-block;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  white-space: pre-wrap;
+}
+.fold-text-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.fold-text-visual {
+  display: inline;
+}
+.fold-text-segment {
+  display: inline-block;
+  perspective: 700px;
+  transform-style: preserve-3d;
+  vertical-align: baseline;
+}
+.fold-text-piece {
+  position: relative;
+  display: inline-block;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+.fold-text-piece::after {
+  content: '';
+  position: absolute;
+  inset: -0.08em -0.02em;
+  pointer-events: none;
+  opacity: var(--fold-crease, 0);
+  mix-blend-mode: multiply;
+  border-radius: 0.08em;
+  background: linear-gradient(180deg, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.22) 42%, rgba(255,255,255,0.26) 100%);
+}
+
+/* 响应式追加：触摸设备 / 窄屏关闭光标 */
+@media (max-width: 860px), (hover: none) {
+  #photon-cursor { display: none; }
+}
+
+/* 动效降级追加 */
+@media (prefers-reduced-motion: reduce) {
+  .fold-text-piece { transform: none !important; }
+  .fold-text-piece::after { opacity: 0 !important; }
+  .stroke-text-svg text { stroke-dashoffset: 0 !important; }
+  .stroke-text-svg .stroke-fill { opacity: 1 !important; }
+}
+
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
@@ -21,7 +953,1586 @@
 
 <footer class="footer wrap"></footer>
 
-<script src="assets/js/data.js"></script>
-<script src="assets/js/main.js"></script>
+<script>
+/* ============================================================
+   JIANG YISHAN — CREATIVE INTELLIGENCE ARCHIVE
+   统一数据文件（全站唯一内容源）
+   规则：
+   - 所有项目 / 实习 / 文案集中在此文件，禁止散落在 HTML 中硬编码
+   - 中英文独立配置（zh / en）
+   - 未经确认的真实信息一律标记 TODO，不得虚构
+   ============================================================ */
+
+window.SITE_DATA = (function () {
+
+  /* ---------- 分类定义（编号与顺序固定，不得更改） ---------- */
+  const CATEGORIES = [
+    {
+      id: 'aigc',
+      num: '01',
+      name: { zh: 'AIGC 运营设计', en: 'AIGC & Operation' },
+      accent: '#8b5cf6' // 紫色
+    },
+    {
+      id: 'brand',
+      num: '02',
+      name: { zh: '品牌设计', en: 'Brand Design' },
+      accent: '#e3cf7e' // 柔和黄
+    },
+    {
+      id: 'app',
+      num: '03',
+      name: { zh: 'APP 设计', en: 'APP & UX' },
+      accent: '#f0a24a' // 琥珀橙
+    },
+    {
+      id: 'ip',
+      num: '04',
+      name: { zh: 'IP 设计', en: 'IP & Character' },
+      accent: '#8fc7ee' // 浅蓝
+    },
+    {
+      id: 'internship',
+      num: '05',
+      name: { zh: '实习作品', en: 'Internship Archive' },
+      accent: '#9ed6a5' // 柔和绿
+    }
+  ];
+
+  /* ---------- 项目数据 ----------
+     tier: 'A' 核心案例(完整详情) | 'B' 补充案例(紧凑详情) | 'C' 实习档案
+     featured: 1-4 为首页精选顺序，null 为仅档案收录
+     thumb: [文件, object-position] —— 从长图拼版中取景，不修改原图
+  ------------------------------------------------------------ */
+  const PROJECTS = [
+    {
+      slug: 'ai-planet',
+      num: '01',
+      category: 'aigc',
+      tier: 'A',
+      featured: 1,
+      title: { zh: 'AI星球计划', en: 'AI Planet Plan' },
+      subtitle: {
+        zh: 'AI 伙伴运营活动设计',
+        en: 'AI Companion Campaign Design'
+      },
+      date: { zh: '2026.07 – 2026.08', en: 'Jul 2026 – Aug 2026' },
+      role: { zh: '运营设计师', en: 'Operation Designer' },
+      tools: { zh: 'PS · AI · Figma · ChatGPT', en: 'PS · AI · Figma · ChatGPT' },
+      value: {
+        zh: '从「AI 工具」到「AI 伙伴」——一次覆盖用户调研、增长策略、活动 KV、传播矩阵与数据复盘的完整运营设计。',
+        en: 'From “AI tool” to “AI companion” — a full operation-design cycle covering research, growth strategy, key visuals, communication and data review.'
+      },
+      keywords: {
+        zh: ['AIGC 生成', '运营策划', '用户调研', '活动 KV', '数据复盘'],
+        en: ['AIGC', 'Campaign', 'User Research', 'Key Visual', 'Data Review']
+      },
+      boards: [
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-01.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-02.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-03.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-04.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-05.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-06.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-07.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-08.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-09.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-10.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-11.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-12.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-13.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-14.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-15.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-16.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-17.png'
+      ],
+      thumb: { file: 'assets/portfolio-long-images/ai-planet/ai-planet.png', pos: '50% 3%', parts: [
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-01.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-02.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-03.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-04.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-05.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-06.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-07.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-08.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-09.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-10.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-11.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-12.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-13.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-14.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-15.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-16.png',
+        'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-17.png'
+      ] },
+      /* 以下章节标题均识别自原始长图，为真实信息；正文待作者补充 */
+      sections: [
+        { zh: '项目背景：从 AI 工具到 AI 伙伴', en: 'Background: From AI Tool to AI Companion' },
+        { zh: '竞品分析', en: 'Competitive Analysis' },
+        { zh: 'AI 情感化生态机会探索', en: 'Emotional AI Ecosystem Opportunities' },
+        { zh: '用户调研', en: 'User Research' },
+        { zh: '三类核心用户画像', en: 'Three Core Personas' },
+        { zh: '用户旅程图', en: 'User Journey Map' },
+        { zh: '三大核心洞察', en: 'Three Key Insights' },
+        { zh: 'AI 星球增长策略', en: 'Growth Strategy' },
+        { zh: '30 天 AI 星球探索计划', en: '30-Day Exploration Plan' },
+        { zh: '主 KV：欢迎来到 AI 星球', en: 'Key Visual: Welcome to AI Planet' },
+        { zh: 'AI 伙伴设计', en: 'AI Companion Design' },
+        { zh: '品牌视觉系统', en: 'Visual Identity System' },
+        { zh: '活动首页设计', en: 'Campaign Landing Page' },
+        { zh: '任务成长体系', en: 'Task & Growth System' },
+        { zh: 'UGC 传播设计', en: 'UGC Communication Design' },
+        { zh: '运营传播矩阵', en: 'Communication Matrix' },
+        { zh: '数据复盘', en: 'Data Review' },
+        { zh: '项目总结', en: 'Conclusion' }
+      ],
+      todo: ['AI 及设计工具清单', 'Prompt 迭代记录', '成果数据', '项目视频（如有）']
+    },
+
+    {
+      slug: 'spark-ai-video',
+      num: '02',
+      category: 'aigc',
+      tier: 'A',
+      featured: null,
+      internshipRef: 'spark', // 与实习档案交叉引用，实习区不重复展示
+      title: { zh: '火花思维 · AI 视频', en: 'Spark Thinking · AI Video' },
+      subtitle: {
+        zh: '实习项目 · AIGC 视频工作流',
+        en: 'Internship · AIGC Video Workflow'
+      },
+      date: { zh: '2026.01 – 2026.04', en: 'Jan 2026 – Apr 2026' },
+      role: { zh: 'UI 原画师', en: 'UI Original Painter' },
+      tools: { zh: 'PS · AI · Figma · ChatGPT', en: 'PS · AI · Figma · ChatGPT' },
+      value: {
+        zh: '真实业务场景下的 AI 视频制作：从分镜规划、生成筛选到镜头控制与成片产出。',
+        en: 'AI video production in a real business context — from storyboard planning and generation curation to shot control and final output.'
+      },
+      keywords: {
+        zh: ['AI 视频', '分镜规划', '生成筛选', '镜头控制', '成片产出'],
+        en: ['AI Video', 'Storyboard', 'Curation', 'Shot Control', 'Final Cut']
+      },
+      boards: [
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-01.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-02.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-03.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-04.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-05.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-06.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-07.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-08.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-09.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-10.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-11.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-12.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-13.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-14.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-15.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-16.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-17.png'
+      ],
+      thumb: { file: 'assets/portfolio-long-images/spark-ai-video/spark.png', pos: '50% 38%', parts: [
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-01.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-02.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-03.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-04.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-05.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-06.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-07.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-08.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-09.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-10.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-11.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-12.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-13.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-14.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-15.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-16.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-17.png'
+      ] },
+      sections: [
+        { zh: '项目背景', en: 'Background' },
+        { zh: '使用群体', en: 'Target Users' },
+        { zh: '体验地图', en: 'Experience Map' },
+        { zh: '制作流程：分镜与生成', en: 'Workflow: Storyboard & Generation' },
+        { zh: '问题解决：效率优化', en: 'Problem Solving: Efficiency' },
+        { zh: '问题解决：沟通协作', en: 'Problem Solving: Collaboration' },
+        { zh: '问题解决：镜头控制', en: 'Problem Solving: Shot Control' },
+        { zh: '结果产出', en: 'Final Output' }
+      ],
+      todo: ['所属部门/业务方向', 'AI 及设计工具清单', '视频成片（mp4 或链接）', '可公开范围说明']
+    },
+
+    {
+      slug: 'huiboyuntong',
+      num: '02',
+      category: 'aigc',
+      tier: 'A',
+      featured: 2,
+      title: { zh: '慧博云通 · AI 电商视频', en: 'Hybotone · AI E-Commerce Video' },
+      subtitle: {
+        zh: '实习项目 · AI 电商视频与大模型测试',
+        en: 'Internship · AI E-Commerce Video & LLM Testing'
+      },
+      date: { zh: '2026.05 – 2026.09', en: 'May 2026 – Sep 2026' },
+      role: { zh: '视觉设计师', en: 'Visual Designer' },
+      tools: { zh: 'PS · AI · Figma · ChatGPT', en: 'PS · AI · Figma · ChatGPT' },
+      value: {
+        zh: '独立使用 AI 工具进行商品电商展示视频生成，参与视频生成工作流与大模型测试，提炼可用共性提示词。',
+        en: 'Used AI tools independently to generate e-commerce product videos, participated in workflow and LLM testing, distilled reusable prompt keywords.'
+      },
+      keywords: {
+        zh: ['AI 视频', '电商展示', '大模型测试', '提示词工程', '工作流优化'],
+        en: ['AI Video', 'E-Commerce', 'LLM Testing', 'Prompt Engineering', 'Workflow']
+      },
+      boards: [
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-01.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-02.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-03.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-04.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-05.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-06.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-07.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-08.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-09.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-10.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-11.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-12.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-13.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-14.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-15.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-16.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-17.png'
+      ],
+      thumb: { file: 'assets/portfolio-long-images/huiboyuntong/huiboyuntong.png', pos: '50% 50%', parts: [
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-01.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-02.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-03.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-04.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-05.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-06.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-07.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-08.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-09.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-10.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-11.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-12.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-13.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-14.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-15.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-16.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-17.png'
+      ] },
+      sections: [
+        { zh: '项目背景', en: 'Background' },
+        { zh: 'AI 电商视频生成', en: 'AI E-Commerce Video Generation' },
+        { zh: '视频生成工作流测试', en: 'Video Generation Workflow Testing' },
+        { zh: '大模型测试与验证', en: 'Large Model Testing & Validation' },
+        { zh: '共性提示词提炼', en: 'Common Prompt Distillation' },
+        { zh: 'AI 打标协作', en: 'AI Data Labeling Collaboration' },
+        { zh: '结果产出', en: 'Final Output' }
+      ],
+      todo: ['代表性成果数据', '可公开范围说明', '项目视频（mp4 或链接）'],
+      videos: [
+        { src: 'assets/videos/optimized/dissolve-1.mp4', poster: 'assets/videos/posters/dissolve-1.jpg', title: { zh: '元素消散', en: 'Element Dissolve' } },
+        { src: 'assets/videos/optimized/dissolve-2.mp4', poster: 'assets/videos/posters/dissolve-2.jpg', title: { zh: '元素消散 2', en: 'Element Dissolve 2' } },
+        { src: 'assets/videos/optimized/light-carving.mp4', poster: 'assets/videos/posters/light-carving.jpg', title: { zh: '光源雕刻', en: 'Light Carving' } },
+        { src: 'assets/videos/optimized/body-wipe.mp4', poster: 'assets/videos/posters/body-wipe.jpg', title: { zh: '肢体遮挡过场', en: 'Body Wipe Transition' } }
+      ]
+    },
+
+    {
+      slug: 'meow-coffee',
+      num: '03',
+      category: 'brand',
+      tier: 'A',
+      featured: null,
+      title: { zh: '猫咖啡 MEOW COFFEE', en: 'MEOW COFFEE' },
+      subtitle: { zh: '咖啡品牌全案设计', en: 'Coffee Brand Identity' },
+      date: { zh: '2026.07 – 2026.08', en: 'Jul 2026 – Aug 2026' },
+      role: { zh: '品牌设计师', en: 'Brand Designer' },
+      tools: { zh: 'PS · AI · Figma · ChatGPT', en: 'PS · AI · Figma · ChatGPT' },
+      value: {
+        zh: '一只猫的温度——从 LOGO 到门店空间、包装系统、菜单海报与小程序的完整咖啡品牌。',
+        en: 'The warmth of a cat — a complete coffee brand from logo to storefront, packaging, menus and mini-app.'
+      },
+      keywords: {
+        zh: ['品牌识别', '包装系统', '空间应用', '小程序', '节日 Campaign'],
+        en: ['Identity', 'Packaging', 'Retail Space', 'Mini App', 'Campaign']
+      },
+      boards: [
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-01.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-02.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-03.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-04.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-05.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-06.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-07.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-08.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-09.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-10.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-11.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-12.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-13.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-14.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-15.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-16.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-17.png'
+      ],
+      thumb: { file: 'assets/portfolio-long-images/meow-coffee/meow-coffee.png', pos: '50% 10%', parts: [
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-01.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-02.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-03.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-04.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-05.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-06.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-07.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-08.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-09.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-10.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-11.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-12.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-13.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-14.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-15.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-16.png',
+        'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-17.png'
+      ] },
+      sections: [
+        { zh: '品牌概念', en: 'Brand Concept' },
+        { zh: 'LOGO 与视觉识别', en: 'Logo & Visual Identity' },
+        { zh: '色彩系统', en: 'Color System' },
+        { zh: '门店空间应用', en: 'Storefront & Interior' },
+        { zh: '菜单与海报', en: 'Menu & Posters' },
+        { zh: '包装系统', en: 'Packaging System' },
+        { zh: '图标系统', en: 'Icon System' },
+        { zh: '小程序界面', en: 'Mini-App Interface' },
+        { zh: '圣诞 Campaign', en: 'Christmas Campaign' },
+        { zh: '周边延展', en: 'Merchandise' }
+      ],
+      todo: ['项目时间', '担任角色', '品牌定位与用户洞察正文', '工具清单', '项目背景说明']
+    },
+
+    {
+      slug: 'muse-ai',
+      num: '04',
+      category: 'app',
+      tier: 'A',
+      featured: 4,
+      title: { zh: 'Muse AI', en: 'Muse AI' },
+      subtitle: { zh: 'APP / UIUX 设计', en: 'APP & UIUX Design' },
+      date: { zh: '2026.06 – 2026.07', en: 'Jun 2026 – Jul 2026' },
+      role: { zh: 'UIUX 设计师', en: 'UIUX Designer' },
+      tools: { zh: 'PS · AI · Figma · ChatGPT', en: 'PS · AI · Figma · ChatGPT' },
+      value: {
+        zh: '深色语境下的 AI 应用界面——从用户研究到字体与界面规范的完整产品设计。',
+        en: 'An AI application in a dark interface context — from user research to typography and UI specifications.'
+      },
+      keywords: {
+        zh: ['UI / UX', '深色界面', '设计规范', '交互设计'],
+        en: ['UI / UX', 'Dark UI', 'Design Specs', 'Interaction']
+      },
+      boards: [
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-01.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-02.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-03.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-04.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-05.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-06.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-07.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-08.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-09.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-10.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-11.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-12.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-13.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-14.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-15.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-16.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-17.png'
+      ],
+      thumb: { file: 'assets/portfolio-long-images/muse-ai/muse-ai.png', pos: '50% 4%', parts: [
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-01.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-02.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-03.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-04.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-05.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-06.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-07.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-08.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-09.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-10.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-11.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-12.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-13.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-14.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-15.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-16.png',
+        'assets/portfolio-long-images/muse-ai/optimized/muse-ai-part-17.png'
+      ] },
+      sections: [
+        { zh: '产品定位', en: 'Product Positioning' },
+        { zh: '用户研究', en: 'User Research' },
+        { zh: '信息架构与用户流程', en: 'IA & User Flow' },
+        { zh: '设计规范：Inter Display 字体系统', en: 'Design Specs: Inter Display Typography' },
+        { zh: '核心页面', en: 'Key Screens' },
+        { zh: '组件与交互', en: 'Components & Interaction' },
+        { zh: '设计复盘', en: 'Retrospective' }
+      ],
+      todo: ['产品定位正文（长图小字待确认）', '工具清单', '演示录屏（如有）']
+    },
+
+    {
+      slug: 'melora',
+      num: '03',
+      category: 'brand',
+      tier: 'A',
+      featured: 3,
+      title: { zh: 'MELORA', en: 'MELORA' },
+      subtitle: { zh: '烘焙品牌设计', en: 'Bakery Brand Design' },
+      date: { zh: '2026.07 – 2026.08', en: 'Jul 2026 – Aug 2026' },
+      role: { zh: '品牌设计师', en: 'Brand Designer' },
+      value: {
+        zh: '以 Curiosity / Creativity / Warmth / Joy 为品牌价值的烘焙品牌视觉系统。',
+        en: 'A bakery brand system built on the values of Curiosity, Creativity, Warmth and Joy.'
+      },
+      keywords: {
+        zh: ['品牌价值观', '包装系统', '色彩规范', '海报', 'APP 界面'],
+        en: ['Brand Values', 'Packaging', 'Color System', 'Posters', 'App UI']
+      },
+      boards: [
+        'assets/portfolio-long-images/melora/optimized/melora-part-01.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-02.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-03.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-04.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-05.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-06.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-07.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-08.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-09.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-10.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-11.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-12.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-13.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-14.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-15.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-16.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-17.png'
+      ],
+      thumb: { file: 'assets/portfolio-long-images/melora/melora.png', pos: '50% 2%', parts: [
+        'assets/portfolio-long-images/melora/optimized/melora-part-01.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-02.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-03.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-04.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-05.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-06.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-07.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-08.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-09.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-10.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-11.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-12.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-13.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-14.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-15.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-16.png',
+        'assets/portfolio-long-images/melora/optimized/melora-part-17.png'
+      ] },
+      sections: [
+        { zh: '品牌价值观：Curiosity / Creativity / Warmth / Joy', en: 'Brand Values' },
+        { zh: '色彩系统：Brown / Butter / Orange / Cream', en: 'Color System' },
+        { zh: '品牌字体：MiSans', en: 'Brand Typeface: MiSans' },
+        { zh: '包装系统', en: 'Packaging System' },
+        { zh: '海报与物料', en: 'Posters & Collateral' },
+        { zh: 'APP 界面', en: 'App Interface' }
+      ],
+      todo: ['品牌定位与市场洞察正文', '工具清单']
+    },
+
+    {
+      slug: 'pajama-party',
+      num: '06',
+      category: 'ip',
+      tier: 'B',
+      featured: null,
+      title: { zh: '睡衣派对', en: 'Pajama Party' },
+      subtitle: {
+        zh: '「嘘，是奇幻世界的睡衣派对」IP 形象设计',
+        en: '“A Pajama Party in a Fantasy World” Character IP'
+      },
+      date: { zh: '2026.07 – 2026.08', en: 'Jul 2026 – Aug 2026' },
+      role: { zh: 'IP 设计师', en: 'IP Designer' },
+      value: {
+        zh: '一套奇幻世界观下的角色 IP 系统：角色设定、三视图、表情服装体系与周边场景延展。',
+        en: 'A character IP system in a fantasy world — character sheets, three-view turnarounds, expressions, outfits and merchandise extensions.'
+      },
+      keywords: {
+        zh: ['角色设定', '三视图', '表情系统', '盲盒周边', '场景应用'],
+        en: ['Character Design', 'Turnaround', 'Expressions', 'Blind Box', 'Applications']
+      },
+      boards: [
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-01.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-02.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-03.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-04.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-05.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-06.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-07.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-08.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-09.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-10.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-11.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-12.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-13.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-14.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-15.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-16.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP1-part-17.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-01.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-02.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-03.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-04.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-05.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-06.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-07.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-08.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-09.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-10.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-11.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-12.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-13.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-14.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-15.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-16.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-17.png'
+      ],
+      thumb: { file: 'assets/portfolio-long-images/pajama-party/IP2.png', pos: '50% 5%', parts: [
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-01.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-02.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-03.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-04.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-05.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-06.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-07.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-08.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-09.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-10.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-11.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-12.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-13.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-14.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-15.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-16.png',
+        'assets/portfolio-long-images/pajama-party/optimized/IP2-part-17.png'
+      ] },
+      sections: [
+        { zh: 'IP 背景与角色定位', en: 'IP Background & Positioning' },
+        { zh: '角色设定（含「天使云云」等角色）', en: 'Character Sheets (incl. “Angel Yunyun”)' },
+        { zh: '三视图与造型推导', en: 'Turnarounds & Form Development' },
+        { zh: '表情与服装系统', en: 'Expression & Outfit System' },
+        { zh: '主 KV：嘘，是奇幻世界的睡衣派对', en: 'Key Visual' },
+        { zh: '周边延展：水杯 / 帆布包 / 盲盒 / 贴纸卡牌', en: 'Merchandise: Cups / Tote / Blind Box / Stickers' },
+        { zh: '户外场景应用', en: 'Outdoor Applications' }
+      ],
+      todo: ['项目时间', '担任角色', '各角色名称与设定正文（长图小字待确认）', '工具清单']
+    }
+  ];
+
+  /* ---------- 实习档案（C级，不制作长篇案例页） ---------- */
+  const INTERNSHIPS = [
+    {
+      id: 'spark',
+      company: { zh: '火花思维', en: 'Spark Thinking' },
+      companyFull: { zh: '火花思维教育科技有限公司', en: 'Spark Thinking Education Technology Co., Ltd.' },
+      period: { zh: '2026.01 – 2026.04', en: 'Jan 2026 – Apr 2026' },
+      role: { zh: 'UI 原画设计师', en: 'UI Original Painter Designer' },
+      department: { zh: 'AI 教学视频 / 课件设计 / 物料制作', en: 'AI Educational Video / Courseware / Marketing Material' },
+      duties: {
+        zh: ['独立使用 AI 工具辅助完成 AI 教学视频的制作', '独立制作多个单元课程教材封面封底等的设计并落地', '配合设计师进行素材的日常切图与美工', '独立制作教学内容所需的场景原画设计'],
+        en: ['Used AI tools independently to produce AI educational videos', 'Designed and delivered textbook covers and back covers for multiple course units', 'Collaborated with designers on daily asset slicing and image refinement', 'Created scene original paintings for educational content independently']
+      },
+      tools: { zh: 'PS · AI · Figma · ChatGPT', en: 'PS · AI · Figma · ChatGPT' },
+      outcomes: { zh: 'TODO · 代表性成果待补充', en: 'TODO · Key outcomes TBC' },
+      disclosure: { zh: 'TODO · 可公开范围说明待补充', en: 'TODO · Disclosure notes TBC' },
+      thumb: { file: 'assets/portfolio-long-images/spark-ai-video/spark.png', pos: '50% 8%', parts: [
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-01.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-02.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-03.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-04.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-05.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-06.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-07.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-08.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-09.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-10.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-11.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-12.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-13.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-14.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-15.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-16.png',
+        'assets/portfolio-long-images/spark-ai-video/optimized/spark-part-17.png'
+      ] },
+      /* AI 视频已作为 AIGC 核心案例展示，此处仅保留链接，不重复建页 */
+      linkedProject: 'spark-ai-video'
+    },
+    {
+      id: 'tech-ai-video',
+      company: { zh: '慧博云通', en: 'Hybotone' },
+      companyFull: { zh: '慧博云通科技有限公司', en: 'Hybotone Technology Co., Ltd.' },
+      period: { zh: '2026.05 – 2026.09', en: 'May 2026 – Sep 2026' },
+      role: { zh: '视觉设计师', en: 'Visual Designer' },
+      department: { zh: 'AI 电商视频 / 大模型测试', en: 'AI E-Commerce Video / LLM Testing' },
+      duties: {
+        zh: ['独立使用 AI 工具进行商品电商展示视频的生成', '参与公司内部视频生成工作流与大模型的测试', '在测试过程中验证并总结提炼出可用的共性提示词', '配合设计师进行 AI 的打标'],
+        en: ['Used AI tools independently to generate e-commerce product display videos', 'Participated in internal video generation workflow and large model testing', 'Verified and distilled reusable common prompt keywords during testing', 'Collaborated with designers on AI data labeling']
+      },
+      tools: { zh: 'PS · AI · Figma · ChatGPT', en: 'PS · AI · Figma · ChatGPT' },
+      outcomes: { zh: 'TODO · 代表性成果待补充', en: 'TODO · Key outcomes TBC' },
+      disclosure: { zh: 'TODO · 可公开范围说明待补充', en: 'TODO · Disclosure notes TBC' },
+      thumb: { file: 'assets/portfolio-long-images/huiboyuntong/huiboyuntong.png', pos: '50% 50%', parts: [
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-01.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-02.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-03.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-04.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-05.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-06.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-07.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-08.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-09.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-10.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-11.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-12.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-13.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-14.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-15.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-16.png',
+        'assets/portfolio-long-images/huiboyuntong/optimized/huiboyuntong-part-17.png'
+      ] },
+      linkedProject: 'huiboyuntong'
+    }
+  ];
+
+  /* ---------- 全站文案（中英文独立配置） ---------- */
+  const I18N = {
+    zh: {
+      nav: { works: '精选作品', archive: '作品档案', about: '关于我', contact: '联系' },
+      hero: {
+        tagA: 'AIGC CREATIVE DESIGNER',
+        tagB: 'VISUAL STORYTELLER',
+        intro: '探索生成式 AI 如何重塑视觉概念、动态影像与创意工作流。',
+        ctaWorks: '探索精选作品',
+        ctaAbout: '关于我 ↗',
+        cloud: 'CREATIVE ARCHIVE CLOUD'
+      },
+      sections: {
+        works: { num: '01', title: 'SELECTED WORKS', zh: '精选作品' },
+        workflow: { num: '02', title: 'CREATIVE WORKFLOW', zh: '创意工作流' },
+        archive: { num: '03', title: 'WORK ARCHIVE', zh: '作品档案' },
+        about: { num: '04', title: 'ABOUT', zh: '关于我' },
+        experience: { num: '05', title: 'EXPERIENCE', zh: '实习经历' },
+        contact: { num: '06', title: 'CONTACT', zh: '联系' }
+      },
+      workflow: [
+        { t: '需求与策划', d: '明确目标、受众与内容方向' },
+        { t: 'Prompt 设计与迭代', d: '关键词结构设计 · 多轮测试' },
+        { t: '生成与筛选', d: '批量生成 · 审美与标准筛选' },
+        { t: '人工修整', d: '细节修正 · 视觉统一' },
+        { t: '剪辑与动态', d: '节奏 · 动效 · 成片' },
+        { t: '发布与复盘', d: '上线 · 数据 · 工作流优化' }
+      ],
+      labels: {
+        date: '时间', role: '角色', tools: '工具', keywords: '关键词', phone: '电话',
+        viewCase: '查看案例 ↗', projects: '个项目', backHome: '← 返回首页',
+        nextProject: '下一个项目', todo: '待补充', fullBoard: '项目完整长图',
+        outline: '项目结构', linkedCase: '查看完整案例 ↗', company: '公司',
+        period: '时间', department: '部门', duties: '核心职责', outcomes: '代表成果',
+        disclosure: '公开说明', more: '了解更多 ↗', expandHint: '悬停或点击展开'
+      },
+      about: {
+        lead: '你好，我是姜懿珊，一名以 AIGC 创意设计为核心的视觉设计师。',
+        photo: 'jiangyishan.jpg',
+        bio: '我关注生成式 AI 如何参与创意构思、图像与视频生产，以及最终的视觉交付。通过 Prompt 迭代、内容筛选、人工精修与动态设计，我将 AI 生成能力转化为完整且统一的视觉表达。除 AIGC 内容创作外，我也具备品牌、APP 与 IP 设计经验，希望在技术与设计之间创造更具辨识度的视觉体验。',
+        capsTitle: '能力范围',
+        caps: ['AIGC 图像与视频生成', '运营视觉与内容策划', '脚本与分镜', 'Prompt 设计与迭代', '人工修整与视觉统一', '视频剪辑与动态设计', '品牌视觉识别', 'APP / UIUX 设计', 'IP 角色设计', 'IP 设计', '品牌设计', 'UI 设计'],
+        toolsTitle: '工具',
+        tools: 'Figma · Adobe Creative Suite (PS / AI / PR / AE) · ComfyUI · Stable Diffusion WebUI',
+        eduTitle: '教育背景',
+        edu: '湖北工业大学 · 艺术设计学院 · 视觉传达设计 · 2027 届本科'
+      },
+      contact: {
+        title: 'LET’S CREATE',
+        sub: '正在寻找 AIGC 创意 / AI 视频 / 视觉设计方向的机会。',
+        email: '1063814724@qq.com',
+        phone: '18971693270',
+        socials: 'TODO · 社交链接（Behance / 站酷 / 小红书等）'
+      },
+      footer: '© 2026 Jiang Yishan 姜懿珊 · Creative Intelligence Archive',
+      langBtn: 'EN'
+    },
+
+    en: {
+      nav: { works: 'Works', archive: 'Archive', about: 'About', contact: 'Contact' },
+      hero: {
+        tagA: 'AIGC CREATIVE DESIGNER',
+        tagB: 'VISUAL STORYTELLER',
+        intro: 'Exploring how generative AI transforms visual concepts, moving images and creative workflows.',
+        ctaWorks: 'Explore Selected Works',
+        ctaAbout: 'About Me ↗',
+        cloud: 'CREATIVE ARCHIVE CLOUD'
+      },
+      sections: {
+        works: { num: '01', title: 'SELECTED WORKS', zh: 'Selected Works' },
+        workflow: { num: '02', title: 'CREATIVE WORKFLOW', zh: 'Creative Workflow' },
+        archive: { num: '03', title: 'WORK ARCHIVE', zh: 'Work Archive' },
+        about: { num: '04', title: 'ABOUT', zh: 'About' },
+        experience: { num: '05', title: 'EXPERIENCE', zh: 'Experience' },
+        contact: { num: '06', title: 'CONTACT', zh: 'Contact' }
+      },
+      workflow: [
+        { t: 'Brief & Planning', d: 'Goals, audience, direction' },
+        { t: 'Prompt Design', d: 'Keyword structure · iteration' },
+        { t: 'Generate & Curate', d: 'Batch output · curation' },
+        { t: 'Human Refinement', d: 'Detail fixes · consistency' },
+        { t: 'Edit & Motion', d: 'Rhythm · motion · final cut' },
+        { t: 'Publish & Review', d: 'Launch · data · optimize' }
+      ],
+      labels: {
+        date: 'Date', role: 'Role', tools: 'Tools', keywords: 'Keywords', phone: 'Phone',
+        viewCase: 'View Case ↗', projects: ' Projects', backHome: '← Back to Home',
+        nextProject: 'Next Project', todo: 'TBC', fullBoard: 'Full Project Board',
+        outline: 'Project Outline', linkedCase: 'View Full Case ↗', company: 'Company',
+        period: 'Period', department: 'Department', duties: 'Responsibilities', outcomes: 'Outcomes',
+        disclosure: 'Disclosure', more: 'Read More ↗', expandHint: 'Hover or tap to open'
+      },
+      about: {
+        lead: "Hi, I'm Jiang Yishan, a visual designer centered on AIGC creative design.",
+        photo: 'jiangyishan.jpg',
+        bio: 'I focus on how generative AI participates in creative ideation, image and video production, and final visual delivery. Through prompt iteration, content curation, human refinement and motion design, I transform AI generation capabilities into complete and unified visual expressions. Beyond AIGC content creation, I also have experience in brand, APP and IP design — aiming to create more distinctive visual experiences at the intersection of technology and design.',
+        capsTitle: 'Capabilities',
+        caps: ['AIGC Image & Video', 'Campaign Visuals & Content', 'Script & Storyboard', 'Prompt Design & Iteration', 'Human Refinement', 'Video Editing & Motion', 'Brand Identity', 'APP / UIUX Design', 'IP Character Design', 'IP Design', 'Brand Design', 'UI Design'],
+        toolsTitle: 'Tools',
+        tools: 'Figma · Adobe Creative Suite (PS / AI / PR / AE) · ComfyUI · Stable Diffusion WebUI',
+        eduTitle: 'Education',
+        edu: 'Hubei University of Technology · School of Art & Design · Visual Communication Design · Class of 2027'
+      },
+      contact: {
+        title: 'LET’S CREATE',
+        sub: 'Open to AIGC creative / AI video / visual design opportunities.',
+        email: '1063814724@qq.com',
+        phone: '18971693270',
+        socials: 'TODO · Socials (Behance / Zcool / RED etc.)'
+      },
+      footer: '© 2026 Jiang Yishan · Creative Intelligence Archive',
+      langBtn: '中'
+    }
+  };
+
+  return { CATEGORIES, PROJECTS, INTERNSHIPS, I18N };
+})();
+
+</script>
+<script>
+/* ============================================================
+   JIANG YISHAN — CREATIVE INTELLIGENCE ARCHIVE
+   全站渲染逻辑 v3（原生 JS + GSAP）
+   新增：Galaxy 粒子云 / PhotonCursor 光标 / StrokeText / FoldText
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var D = window.SITE_DATA;
+  var body = document.body;
+  var page = body.getAttribute('data-page');
+  var base = body.getAttribute('data-base') || '';
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- 语言 ---------- */
+  var LANG_KEY = 'jys-lang';
+  function getLang() {
+    try { return localStorage.getItem(LANG_KEY) === 'en' ? 'en' : 'zh'; }
+    catch (e) { return 'zh'; }
+  }
+  function setLang(l) {
+    try { localStorage.setItem(LANG_KEY, l); } catch (e) {}
+  }
+  var lang = getLang();
+  function T() { return D.I18N[lang]; }
+  function cat(id) {
+    for (var i = 0; i < D.CATEGORIES.length; i++) if (D.CATEGORIES[i].id === id) return D.CATEGORIES[i];
+    return null;
+  }
+  function proj(slug) {
+    for (var i = 0; i < D.PROJECTS.length; i++) if (D.PROJECTS[i].slug === slug) return D.PROJECTS[i];
+    return null;
+  }
+  function isTodo(v) { return typeof v === 'string' && v.indexOf('TODO') === 0; }
+  function txt(v) { return v[lang] || v.zh; }
+  function maybeTodo(v) { return isTodo(v.zh) ? '<span class="todo">' + esc(txt(v)) + '</span>' : esc(txt(v)); }
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  // 超长图按 2000px 精确切片，约 17 段之和 = 原始高度 32768px
+  var PART_HEIGHTS = [2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 768];
+  var LONG_IMG_H = 32768;
+
+  // 把「超长图缩略图」映射到对应的切片 + 局部 object-position，
+  // 复现与原图一致的取景（原图高 32768px，超出 Firefox/Safari 上限会渲染失败）
+  function thumbView(thumb) {
+    if (!thumb || !thumb.parts || !thumb.parts.length) return { src: thumb.file, pos: thumb.pos };
+    var pos = String(thumb.pos || '50% 50%').trim().split(/\s+/);
+    var pct = parseFloat(pos[pos.length - 1]) || 0;
+    var y = pct / 100 * LONG_IMG_H;
+    var acc = 0, idx = 0;
+    for (var i = 0; i < PART_HEIGHTS.length; i++) {
+      if (y < acc + PART_HEIGHTS[i]) { idx = i; break; }
+      acc += PART_HEIGHTS[i];
+    }
+    var localPct = ((y - acc) / PART_HEIGHTS[idx]) * 100;
+    return { src: thumb.parts[idx], pos: '50% ' + localPct.toFixed(1) + '%' };
+  }
+
+  function imgTag(thumb, alt, extra) {
+    if (!thumb || !thumb.file || thumb.file === 'TODO') {
+      return '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--ink-faint);font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;"><span class="todo">TODO · Image</span></div>';
+    }
+    var v = thumbView(thumb);
+    return '<img src="' + base + encodeURI(v.src) + '" alt="' + esc(alt) +
+      '" loading="lazy" style="object-position:' + v.pos + '"' + (extra || '') + '>';
+  }
+
+  /* ---------- FoldText（3D 折叠入场） ---------- */
+  function foldText(el, opts) {
+    if (reduced || !window.gsap) return;
+    opts = opts || {};
+    var text = el.textContent;
+    el.textContent = '';
+    el.classList.add('fold-text');
+    var visual = document.createElement('span');
+    visual.className = 'fold-text-visual';
+    visual.setAttribute('aria-hidden', 'true');
+    var sr = document.createElement('span');
+    sr.className = 'fold-text-sr-only';
+    sr.textContent = text;
+    el.appendChild(sr);
+    el.appendChild(visual);
+    var pieces = [];
+    for (var i = 0; i < text.length; i++) {
+      var ch = text[i];
+      var seg = document.createElement('span');
+      seg.className = 'fold-text-segment';
+      var piece = document.createElement('span');
+      piece.className = 'fold-text-piece';
+      piece.textContent = ch === ' ' ? ' ' : ch;
+      seg.appendChild(piece);
+      visual.appendChild(seg);
+      pieces.push(piece);
+    }
+    gsap.set(pieces, { opacity: 0, rotateX: -92, transformOrigin: '50% 0%' });
+    var tl = gsap.timeline({
+      paused: true,
+      scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+    });
+    tl.to(pieces, {
+      opacity: 1, rotateX: 0,
+      duration: opts.duration || 0.65,
+      ease: opts.ease || 'power3.out',
+      stagger: opts.stagger || 0.045,
+      clearProps: 'willChange'
+    });
+    tl.play();
+  }
+
+  /* ---------- StrokeText（SVG 描边绘制） ---------- */
+  function strokeText(el, opts) {
+    if (reduced || !window.gsap) return;
+    opts = opts || {};
+    var text = opts.text || el.textContent;
+    var fontSize = opts.fontSize || 140;
+    var noFill = opts.noFill;
+    var strokeColor = opts.strokeColor || (noFill ? 'var(--ink)' : 'var(--acc)');
+    var fillColor = opts.fillColor || 'var(--ink)';
+    var drawDuration = opts.drawDuration || 1.6;
+    var stagger = opts.stagger || 0.05;
+    var fillDelay = opts.fillDelay || 0.3;
+    el.innerHTML = '';
+    el.style.lineHeight = '0';
+    var svgNS = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('class', 'stroke-text-svg');
+    var vbW = Math.max(400, Math.round(text.length * fontSize * 0.68 + 120));
+    var vbH = Math.round(fontSize * 1.15);
+    svg.setAttribute('viewBox', '0 -' + fontSize + ' ' + vbW + ' ' + vbH);
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svg.style.width = '100%';
+    svg.style.height = 'auto';
+    var txtStroke = document.createElementNS(svgNS, 'text');
+    txtStroke.setAttribute('x', '10');
+    txtStroke.setAttribute('y', '0');
+    txtStroke.setAttribute('fill', 'none');
+    txtStroke.setAttribute('stroke', strokeColor);
+    txtStroke.setAttribute('stroke-width', opts.strokeWidth || '2');
+    txtStroke.setAttribute('stroke-linejoin', 'round');
+    txtStroke.setAttribute('stroke-linecap', 'round');
+    txtStroke.style.fontSize = fontSize + 'px';
+    txtStroke.style.fontWeight = opts.fontWeight || '900';
+    txtStroke.style.letterSpacing = (opts.letterSpacing || -4) + 'px';
+    var charsS = [];
+    for (var i = 0; i < text.length; i++) {
+      var ch = text[i] === ' ' ? ' ' : text[i];
+      var ts = document.createElementNS(svgNS, 'tspan');
+      ts.textContent = ch;
+      txtStroke.appendChild(ts);
+      charsS.push(ts);
+    }
+    svg.appendChild(txtStroke);
+    if (!noFill) {
+      var txtFill = document.createElementNS(svgNS, 'text');
+      txtFill.setAttribute('x', '10');
+      txtFill.setAttribute('y', '0');
+      txtFill.setAttribute('fill', fillColor);
+      txtFill.setAttribute('class', 'stroke-fill');
+      txtFill.style.fontSize = fontSize + 'px';
+      txtFill.style.fontWeight = opts.fontWeight || '900';
+      txtFill.style.letterSpacing = (opts.letterSpacing || -4) + 'px';
+      txtFill.style.opacity = '0';
+      for (var j = 0; j < text.length; j++) {
+        var ch2 = text[j] === ' ' ? ' ' : text[j];
+        var tf = document.createElementNS(svgNS, 'tspan');
+        tf.textContent = ch2;
+        txtFill.appendChild(tf);
+      }
+      svg.appendChild(txtFill);
+    }
+    el.appendChild(svg);
+    var dash = fontSize * 7;
+    gsap.set(charsS, { strokeDasharray: dash, strokeDashoffset: dash });
+    var tl = gsap.timeline({
+      scrollTrigger: opts.scrollTrigger || { trigger: el, start: 'top 85%', once: true }
+    });
+    tl.to(charsS, { strokeDashoffset: 0, duration: drawDuration, ease: opts.ease || 'power2.out', stagger: stagger });
+    if (!noFill && svg.querySelector('.stroke-fill')) {
+      tl.to(svg.querySelector('.stroke-fill'), { opacity: 1, duration: 0.8, ease: 'power2.out' }, '+=' + fillDelay);
+    }
+  }
+
+  /* ---------- Galaxy 粒子云（Canvas 2D） ---------- */
+  function initGalaxy(container) {
+    if (!container) return;
+    var canvas = document.createElement('canvas');
+    canvas.id = 'galaxyCanvas';
+    container.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+    var W, H, cx, cy;
+    var particles = [];
+    var mouse = { x: -9999, y: -9999 };
+    var COUNT = 180;
+    function resize() {
+      var rect = container.getBoundingClientRect();
+      W = canvas.width = rect.width;
+      H = canvas.height = rect.height;
+      cx = W / 2; cy = H / 2;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    container.addEventListener('mousemove', function (e) {
+      var rect = container.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    });
+    container.addEventListener('mouseleave', function () {
+      mouse.x = -9999; mouse.y = -9999;
+    });
+    for (var i = 0; i < COUNT; i++) {
+      var angle = Math.random() * Math.PI * 2;
+      var dist = Math.random() * Math.min(W, H) * 0.45;
+      particles.push({
+        angle: angle,
+        dist: dist,
+        size: Math.random() * 2 + 0.5,
+        speed: (Math.random() - 0.5) * 0.002,
+        opacity: Math.random() * 0.6 + 0.2,
+        hue: 260 + Math.random() * 40
+      });
+    }
+    var time = 0;
+    function draw() {
+      if (!document.body.contains(canvas)) return;
+      requestAnimationFrame(draw);
+      ctx.clearRect(0, 0, W, H);
+      time += 0.0005;
+      for (var i = 0; i < COUNT; i++) {
+        var p = particles[i];
+        p.angle += p.speed;
+        var x = cx + Math.cos(p.angle + time) * p.dist;
+        var y = cy + Math.sin(p.angle + time) * p.dist * 0.6;
+        var dx = x - mouse.x;
+        var dy = y - mouse.y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 80) {
+          var f = (80 - d) / 80;
+          x += (dx / d) * f * 30;
+          y += (dy / d) * f * 30;
+        }
+        var twinkle = Math.sin(time * 3 + i) * 0.3 + 0.7;
+        ctx.beginPath();
+        ctx.arc(x, y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'hsla(' + p.hue + ', 70%, 75%, ' + (p.opacity * twinkle) + ')';
+        ctx.fill();
+      }
+    }
+    draw();
+  }
+
+  /* ---------- PhotonCursor 光标（细微发光 + 光电感，克制精致） ----------
+     结构：中心 4px 光点 + 20px 半透明细线圆环。
+     纯原生 rAF 跟随，不依赖 GSAP，不使用持续新增 DOM 的粒子。
+     仅桌面鼠标设备启用；触摸设备 / 减少动态 / 编辑区均自动降级。 */
+  function initSplashCursor() {
+    // 触摸设备（无 hover）直接关闭，避免误触发
+    if (window.matchMedia('(hover: none)').matches) return;
+    if (document.getElementById('photon-cursor')) return;
+
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var root = document.createElement('div');
+    root.id = 'photon-cursor';
+    var ring = document.createElement('div');
+    ring.className = 'pc-ring';
+    var dot = document.createElement('div');
+    dot.className = 'pc-dot';
+    root.appendChild(ring);
+    root.appendChild(dot);
+    document.body.appendChild(root);
+
+    // 残影 + 点击扩散环：固定小池，复用节点，不无限新增 DOM
+    var pool = [];
+    function poolEl(cls) {
+      for (var i = 0; i < pool.length; i++) {
+        if (pool[i].className === cls && pool[i].free) { pool[i].free = false; return pool[i]; }
+      }
+      var el = document.createElement('div');
+      el.className = cls;
+      root.appendChild(el);
+      pool.push(el);
+      return el;
+    }
+
+    function hideCursor() { root.classList.add('is-hidden'); }
+    function showCursor() { root.classList.remove('is-hidden'); }
+    hideCursor();
+
+    // 不隐藏系统光标的情况：编辑区（输入框 / 可编辑文本）需保留原生文字光标
+    var EDITABLE = 'input, textarea, select, [contenteditable="true"], [contenteditable=""], [contenteditable="plaintext-only"]';
+    function isEditable(el) { return !!(el && el.closest && el.closest(EDITABLE)); }
+
+    var hidden = false;                 // 当前是否隐藏了系统光标
+    function syncNativeCursor(el) {
+      var ed = isEditable(el);
+      if (ed && !hidden) { document.body.style.cursor = ''; hidden = true; }
+      else if (!ed && hidden) { document.body.style.cursor = 'none'; hidden = false; }
+    }
+
+    // --- 状态 ---
+    var mx = -1e4, my = -1e4;   // 目标（真实鼠标）
+    var fx = mx, fy = my;       // 光点（紧跟）
+    var rx = mx, ry = my;       // 圆环（轻微延迟）
+    var active = false;         // 悬停交互目标（按钮 / 链接 / 导航 / 卡片）
+    var activeT = 0;            // 悬停强度 0..1
+    var lastTrail = 0, lastMove = 0;
+    var havePoint = false;
+
+    // 光标圆环采用「屏幕坐标 + transform」定位，便于 rAF 内快速更新
+    ring.style.left = '0px'; ring.style.top = '0px';
+    dot.style.left = '0px'; dot.style.top = '0px';
+
+    function spawnTrail(x, y) {
+      var el = poolEl('pc-trail');
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      el.style.opacity = '0.5';
+      el.classList.remove('on');
+      requestAnimationFrame(function () { el.classList.add('on'); });
+    }
+
+    // 点击：一次光电脉冲（圆环缩小→恢复）+ 向外扩散的细线环
+    function pulse() {
+      root.classList.remove('pc-pulse');
+      void root.offsetWidth; // 强制重排以重启动画
+      root.classList.add('pc-pulse');
+      var p = poolEl('pc-pulse-ring');
+      p.style.left = mx + 'px';
+      p.style.top = my + 'px';
+      p.classList.remove('on');
+      void p.offsetWidth;
+      p.classList.add('on');
+      setTimeout(function () { p.free = true; }, 320);
+    }
+
+    function frame(t) {
+      // 悬停强度：交互目标渐入 / 渐出（无高频闪烁）
+      activeT += ((active ? 1 : 0) - activeT) * 0.2;
+      if (Math.abs(activeT) < 0.002) activeT = 0;
+
+      // 光点紧跟，圆环带轻微滞后（不影响操作）
+      var k1 = reduced ? 1 : 0.72;
+      var k2 = reduced ? 1 : 0.18;
+      fx += (mx - fx) * k1;
+      fy += (my - fy) * k1;
+      rx += (mx - rx) * k2;
+      ry += (my - ry) * k2;
+
+      // 圆环：基础 20px，悬停平滑放大到 30px
+      var target = 20 + activeT * 12;
+      var scale = target / 20;
+      var tx = 'translate3d(' + rx.toFixed(2) + 'px,' + ry.toFixed(2) + 'px,0) translate(-50%,-50%) scale(' + scale.toFixed(4) + ')';
+      ring.style.transform = tx;
+      ring.style.opacity = (havePoint ? (0.5 + activeT * 0.35) : 0).toFixed(3);
+      root.classList.toggle('pc-active', activeT > 0.5);
+
+      dot.style.transform = 'translate3d(' + fx.toFixed(2) + 'px,' + fy.toFixed(2) + 'px,0) translate(-50%,-50%)';
+      dot.style.opacity = havePoint ? '1' : '0';
+
+      // 2~3 个短残影，仅在移动时按间距生成，200ms 内淡出
+      if (!reduced && havePoint) {
+        var now = t;
+        if (now - lastMove < 220) {
+          var d = Math.hypot(mx - fx, my - fy);
+          if (d > 6 && now - lastTrail > 42) {
+            lastTrail = now;
+            spawnTrail((mx + fx) / 2, (my + fy) / 2);
+          }
+        }
+      }
+
+      // 鼠标离开窗口：自然淡出；重新进入：恢复
+      if (!havePoint || nowHidden) {
+        if (!root.classList.contains('is-hidden')) hideCursor();
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    var nowHidden = false;
+    function onMouseMove(e) {
+      mx = e.clientX; my = e.clientY;
+      if (!havePoint) { fx = mx; fy = my; rx = mx; ry = my; havePoint = true; }
+      lastMove = performance.now();
+      if (root.classList.contains('is-hidden')) showCursor();
+      syncNativeCursor(e.target);
+    }
+    function onMouseLeave() {
+      havePoint = false;
+      nowHidden = true;
+      setTimeout(function () { nowHidden = false; }, 120);
+    }
+    function onMouseEnter(e) {
+      nowHidden = false;
+      havePoint = true;
+      mx = e.clientX; my = e.clientY;
+      showCursor();
+      syncNativeCursor(e.target);
+    }
+    function onMouseOver(e) {
+      var t = e.target.closest('.cursor-target, a, button, .env, .work-media, .btn');
+      active = !!t && !isEditable(t);
+    }
+    function onMouseDown(e) {
+      if (isEditable(e.target)) return;
+      if (e.button === 0) pulse();
+    }
+
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+    window.addEventListener('mouseover', onMouseOver, true);
+    document.addEventListener('mouseleave', onMouseLeave);
+    document.addEventListener('mouseenter', onMouseEnter);
+    window.addEventListener('mousedown', onMouseDown, true);
+
+    // 编辑区：交还系统光标并临时关闭光球
+    function onFocusIn(e) { if (isEditable(e.target)) hideCursor(); }
+    function onFocusOut(e) {
+      if (isEditable(e.target) && document.activeElement !== e.target) showCursor();
+    }
+    document.addEventListener('focusin', onFocusIn, true);
+    document.addEventListener('focusout', onFocusOut, true);
+
+    if (reduced) {
+      // 减少动态：不隐藏系统光标、无残影、无脉冲，仅保留轻量光点+圆环跟随
+      document.body.style.cursor = '';
+    } else {
+      document.body.style.cursor = 'none';
+      hidden = true;
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------- 顶导航 + 页脚 ---------- */
+  function renderChrome() {
+    var t = T();
+    var nav = document.querySelector('.nav-inner');
+    if (nav) {
+      nav.innerHTML =
+        '<a class="nav-logo" href="' + base + 'index.html">JIANG YISHAN<sup>®</sup></a>' +
+        '<nav class="nav-links" aria-label="Main">' +
+          '<a href="' + base + 'index.html#about">' + t.nav.about + '</a>' +
+          '<a href="' + base + 'index.html#works">' + t.nav.works + '</a>' +
+          '<a href="' + base + 'archive.html">' + t.nav.archive + '</a>' +
+          '<a href="' + base + 'index.html#contact">' + t.nav.contact + '</a>' +
+          '<button class="lang-btn" id="langBtn" aria-label="Switch language">' + t.langBtn + '</button>' +
+        '</nav>';
+      document.getElementById('langBtn').addEventListener('click', function () {
+        setLang(lang === 'zh' ? 'en' : 'zh');
+        location.reload();
+      });
+    }
+    var ft = document.querySelector('.footer');
+    if (ft) ft.innerHTML = '<span>' + t.footer + '</span><span>JIANG YISHAN — CREATIVE INTELLIGENCE ARCHIVE</span>';
+  }
+
+  /* ---------- 滚动显现 ---------- */
+  function observeReveals() {
+    var els = document.querySelectorAll('.reveal');
+    if (reduced || !('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          var el = en.target;
+          var d = parseInt(el.getAttribute('data-delay') || '0', 10);
+          setTimeout(function () { el.classList.add('in'); }, Math.min(d, 300));
+          io.unobserve(el);
+        }
+      });
+    }, { threshold: 0.12 });
+    els.forEach(function (el) { io.observe(el); });
+  }
+
+  /* ---------- 文件袋 ---------- */
+  function envelopeHTML(c, items, countLabel) {
+    var t = T();
+    var thumbs = items.map(function (p) {
+      var img = imgTag(p.thumb, txt(p.title));
+      if (!p.slug) return '<span class="env-thumb">' + img + '</span>';
+      return '<a class="env-thumb" href="' + base + 'projects/' + p.slug + '.html" aria-label="' + esc(txt(p.title)) + '">' + img + '</a>';
+    }).join('');
+    return '<article class="env reveal" style="--eacc:' + c.accent + '" tabindex="0" aria-label="' + esc(c.num + ' ' + txt(c.name)) + '">' +
+      '<div class="env-flap" aria-hidden="true"></div>' +
+      '<span class="env-num">' + c.num + '</span>' +
+      '<h3 class="env-name">' + esc(txt(c.name)) + '</h3>' +
+      '<span class="env-count">' + countLabel + '</span>' +
+      '<div class="env-view"><div class="env-thumbs">' + thumbs + '</div></div>' +
+      '<span class="env-hint">' + t.labels.expandHint + '</span>' +
+    '</article>';
+  }
+  function bindEnvelopeTap(scope) {
+    if (!window.matchMedia('(hover: none)').matches) return;
+    scope.querySelectorAll('.env').forEach(function (env) {
+      env.addEventListener('click', function (e) {
+        if (e.target.closest('.env-thumb')) return;
+        env.classList.toggle('open');
+      });
+    });
+  }
+  function renderEnvelopes(container) {
+    var t = T();
+    container.innerHTML = D.CATEGORIES.map(function (c) {
+      var items, countLabel;
+      if (c.id === 'aigc') {
+        items = D.PROJECTS.filter(function (p) { return p.slug === 'ai-planet'; });
+        countLabel = '1' + t.labels.projects;
+      } else if (c.id === 'internship') {
+        items = D.INTERNSHIPS.map(function (i) {
+          return i.linkedProject ? proj(i.linkedProject) : { slug: '', title: i.company, thumb: i.thumb };
+        });
+        countLabel = D.INTERNSHIPS.length + (lang === 'zh' ? ' 段经历' : ' Exp.');
+      } else {
+        items = D.PROJECTS.filter(function (p) { return p.category === c.id; });
+        countLabel = items.length + t.labels.projects;
+      }
+      return envelopeHTML(c, items, countLabel);
+    }).join('');
+    bindEnvelopeTap(container);
+  }
+
+  /* ================= 首页 ================= */
+  function renderHome() {
+    var t = T();
+    var featured = D.PROJECTS.filter(function (p) { return p.featured; }).sort(function (a, b) { return a.featured - b.featured; });
+
+    /* Hero */
+    var hero = document.getElementById('hero');
+    var frags = [
+      { cls: 'frag-img', file: 'assets/portfolio-long-images/ai-planet/optimized/ai-planet-part-01.png', pos: '50% 3%', style: 'width:180px;height:120px;left:8%;top:14%;animation-duration:9s', alt: 'AI Planet KV' },
+      { cls: 'frag-img', file: 'assets/portfolio-long-images/pajama-party/optimized/IP2-part-01.png', pos: '50% 5%', style: 'width:150px;height:110px;right:6%;top:38%;animation-duration:11s;animation-delay:-3s', alt: 'Pajama Party KV' },
+      { cls: 'frag-img', file: 'assets/portfolio-long-images/meow-coffee/optimized/meow-coffee-part-01.png', pos: '50% 10%', style: 'width:130px;height:96px;left:22%;bottom:12%;animation-duration:10s;animation-delay:-5s', alt: 'MEOW COFFEE' },
+      { cls: 'frag-chip purple', text: 'PROMPT × ITERATION', style: 'left:44%;top:8%;animation-duration:8s;animation-delay:-2s' },
+      { cls: 'frag-chip', text: 'STORYBOARD', style: 'right:14%;top:16%;animation-duration:12s;animation-delay:-4s' },
+      { cls: 'frag-chip', text: 'KEY VISUAL', style: 'left:4%;top:56%;animation-duration:9.5s;animation-delay:-1s' },
+      { cls: 'frag-chip', text: 'CURATION → CUT', style: 'right:22%;bottom:22%;animation-duration:10.5s;animation-delay:-6s' },
+      { cls: 'frag-num', text: 'ARCH-001 / 2026', style: 'left:50%;top:47%' },
+      { cls: 'frag-num', text: 'N 39°54′ · E 116°23′', style: 'right:4%;bottom:8%' },
+      { cls: 'frag-cross', style: 'left:30%;top:32%' },
+      { cls: 'frag-cross', style: 'right:30%;top:62%' },
+      { cls: 'frag-cross', style: 'left:60%;bottom:16%' },
+      { cls: 'frag-geo triangle', style: 'left:12%;top:22%;animation-delay:-2s' },
+      { cls: 'frag-geo circle', style: 'right:18%;top:18%;animation-delay:-4s' },
+      { cls: 'frag-geo rect', style: 'left:55%;bottom:28%;animation-delay:-6s' },
+      { cls: 'frag-geo dot', style: 'left:38%;top:62%;animation-delay:-1s' },
+      { cls: 'frag-geo dot', style: 'right:28%;top:48%;animation-delay:-3s' },
+      { cls: 'frag-geo dot', style: 'left:18%;bottom:38%;animation-delay:-5s' },
+      { cls: 'frag-line', style: 'width:60px;left:42%;top:35%;transform:rotate(25deg)' },
+      { cls: 'frag-line', style: 'width:40px;right:22%;bottom:35%;transform:rotate(-15deg)' }
+    ];
+    var fragHTML = frags.map(function (f) {
+      var inner = '';
+      if (f.cls === 'frag-img') inner = '<img src="' + base + encodeURI(f.file) + '" alt="' + esc(f.alt) + '" loading="lazy" style="object-position:' + f.pos + '">';
+      else if (f.text) inner = esc(f.text);
+      return '<div class="cloud-frag ' + f.cls + '" style="' + f.style + '" aria-hidden="true">' + inner + '</div>';
+    }).join('');
+
+    hero.innerHTML =
+      '<div class="hero-left">' +
+        '<div class="hero-tags reveal"><span>' + t.hero.tagA + '</span><span>' + t.hero.tagB + '</span></div>' +
+        '<h1 class="hero-name reveal" data-delay="80"><span class="hero-row1">JIANG</span><span class="row2">YISHAN</span></h1>' +
+        '<p class="hero-intro reveal" data-delay="160">' + t.hero.intro + '</p>' +
+        '<div class="hero-ctas reveal" data-delay="240">' +
+          '<a class="btn btn-solid" href="#works">' + t.hero.ctaWorks + '</a>' +
+          '<a class="btn btn-ghost" href="about.html">' + t.hero.ctaAbout + '</a>' +
+        '</div>' +
+      '</div>' +
+      '<div class="cloud" id="heroCloud" aria-hidden="true"><span class="cloud-label mono">' + t.hero.cloud + '</span>' + fragHTML + '</div>';
+
+    /* StrokeText Hero */
+    if (!reduced && window.gsap) {
+      var row1 = hero.querySelector('.hero-row1');
+      var row2 = hero.querySelector('.row2');
+      if (row1) strokeText(row1, { fontSize: 200, strokeWidth: 2.5, drawDuration: 1.4, stagger: 0.06, fillDelay: 0.4, strokeColor: 'var(--acc)' });
+      if (row2) strokeText(row2, { fontSize: 200, strokeWidth: 2.5, drawDuration: 1.4, stagger: 0.06, noFill: true, strokeColor: 'var(--ink)' });
+    }
+    /* Galaxy */
+    initGalaxy(document.getElementById('heroCloud'));
+
+    function secHead(id, s) {
+      return '<div class="sec-head reveal">' +
+        '<h2 class="sec-title" data-fold="true">' + s.title + '</h2></div>';
+    }
+
+    /* About Preview */
+    var ab = document.getElementById('about');
+    var hasPhoto = !isTodo({ zh: t.about.photo });
+    var photoHTML = hasPhoto
+      ? '<div class="about-photo reveal"><img src="' + base + encodeURI(t.about.photo) + '" alt="Jiang Yishan"></div>'
+      : '<div class="about-photo todo reveal"><span class="todo">' + t.about.photo + '</span></div>';
+    ab.innerHTML = secHead('about', t.sections.about) +
+      '<div class="about-grid">' +
+        photoHTML +
+        '<div class="reveal" data-delay="120">' +
+          '<p class="about-lead">' + t.about.lead + '</p>' +
+          '<p class="about-bio">' + t.about.bio + '</p>' +
+          '<div class="about-block"><h3>' + t.about.capsTitle + '</h3><div class="about-caps">' +
+            t.about.caps.map(function (c) { return '<span class="key">' + esc(c) + '</span>'; }).join('') +
+          '</div></div>' +
+          '<div class="about-block"><a class="work-link" href="about.html">' + t.labels.more + '</a></div>' +
+        '</div>' +
+      '</div>';
+
+    /* Selected Works */
+    var works = document.getElementById('works');
+    works.innerHTML = secHead('works', t.sections.works) + featured.map(function (p, i) {
+      var c = cat(p.category);
+      return '<article class="work reveal">' +
+        '<div class="work-info">' +
+          '<span class="work-num">' + p.num + '</span>' +
+          '<h3 class="work-title">' + esc(txt(p.title)) + '</h3>' +
+          '<p class="work-sub">' + esc(txt(p.subtitle)) + '</p>' +
+          '<div class="work-meta"><span>' + maybeTodo(p.date) + '</span><span>' + maybeTodo(p.role) + '</span></div>' +
+          '<p class="work-value">' + esc(txt(p.value)) + '</p>' +
+          '<div class="work-keys">' + p.keywords[lang].map(function (k) { return '<span class="key">' + esc(k) + '</span>'; }).join('') + '</div>' +
+          '<a class="work-link" href="projects/' + p.slug + '.html">' + t.labels.viewCase + '</a>' +
+        '</div>' +
+        '<a class="work-media cursor-target" href="projects/' + p.slug + '.html" data-cat="' + esc(txt(c.name)) + '" style="border-top:2px solid ' + c.accent + '">' +
+          imgTag(p.thumb, txt(p.title)) +
+        '</a>' +
+      '</article>';
+    }).join('');
+
+    /* Workflow */
+    var flow = document.getElementById('workflow');
+    flow.innerHTML = secHead('workflow', t.sections.workflow) +
+      '<div class="flow">' + t.workflow.map(function (s, i) {
+        return '<div class="flow-step reveal" data-delay="' + i * 60 + '">' +
+          '<span class="flow-num">0' + (i + 1) + '</span>' +
+          '<div class="flow-t">' + esc(s.t) + '</div>' +
+          '<div class="flow-d">' + esc(s.d) + '</div></div>';
+      }).join('') + '</div>';
+
+    /* Archive */
+    var arch = document.getElementById('archive');
+    arch.innerHTML = secHead('archive', t.sections.archive) + '<div class="envs" id="envHome"></div>';
+    renderEnvelopes(document.getElementById('envHome'));
+
+    /* Experience */
+    var ex = document.getElementById('experience');
+    ex.innerHTML = secHead('experience', t.sections.experience) + D.INTERNSHIPS.map(function (i) {
+      var thumbTag = i.linkedProject
+        ? '<a class="exp-thumb cursor-target" href="projects/' + i.linkedProject + '.html" aria-label="' + esc(txt(i.company)) + '">' + imgTag(i.thumb, txt(i.company)) + '</a>'
+        : '<div class="exp-thumb">' + imgTag(i.thumb, txt(i.company)) + '</div>';
+      return '<div class="exp reveal">' +
+        thumbTag +
+        '<div class="exp-body">' +
+          '<h3 class="exp-company">' + esc(txt(i.company)) + '</h3>' +
+          '<div class="exp-meta"><span>' + maybeTodo(i.period) + '</span><span>' + maybeTodo(i.role) + '</span><span>' + maybeTodo(i.department) + '</span></div>' +
+          '<div class="exp-duties">' + i.duties[lang].map(function (d) { return '<span class="key">' + esc(d) + '</span>'; }).join('') + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    /* Contact */
+    var ct = document.getElementById('contact');
+    ct.innerHTML = secHead('contact', t.sections.contact) +
+      '<div class="contact reveal">' +
+        '<h2 class="contact-title" data-fold="true">' + t.contact.title + ' <span class="arrow">↗</span></h2>' +
+        '<p class="contact-sub">' + t.contact.sub + '</p>' +
+        '<div class="contact-rows">' +
+          '<div class="contact-row"><span>EMAIL</span><span>' + esc(t.contact.email) + '</span></div>' +
+          '<div class="contact-row"><span>PHONE</span><span>' + esc(t.contact.phone) + '</span></div>' +
+        '</div>' +
+      '</div>';
+
+    /* FoldText 板块标题 */
+    if (!reduced && window.gsap) {
+      document.querySelectorAll('[data-fold="true"]').forEach(function (el) {
+        foldText(el, { duration: 0.65, stagger: 0.045 });
+      });
+    }
+  }
+
+  /* ================= 档案页 ================= */
+  function renderArchive() {
+    var t = T();
+    var el = document.getElementById('archivePage');
+    el.innerHTML =
+      '<div class="sec-head reveal"><span class="sec-num">A–Z</span><h2 class="sec-title" data-fold="true">WORK ARCHIVE</h2><span class="sec-zh">' + t.sections.archive.zh + '</span></div>' +
+      '<div class="envs" id="envArchive"></div>';
+    renderEnvelopes(document.getElementById('envArchive'));
+    if (!reduced && window.gsap) {
+      el.querySelectorAll('[data-fold="true"]').forEach(function (el) { foldText(el, { duration: 0.65, stagger: 0.045 }); });
+    }
+  }
+
+  /* ================= About 页 ================= */
+  function renderAbout() {
+    var t = T();
+    var el = document.getElementById('aboutPage');
+    var hasPhoto = !isTodo({ zh: t.about.photo });
+    var photoHTML = hasPhoto
+      ? '<div class="about-photo reveal"><img src="' + base + encodeURI(t.about.photo) + '" alt="Jiang Yishan"></div>'
+      : '<div class="about-photo todo reveal"><span class="todo">' + t.about.photo + '</span></div>';
+    el.innerHTML =
+      '<div class="sec-head reveal"><span class="sec-num">04</span><h2 class="sec-title" data-fold="true">ABOUT</h2><span class="sec-zh">' + t.sections.about.zh + '</span></div>' +
+      '<div class="about-grid">' +
+        photoHTML +
+        '<div class="reveal" data-delay="120">' +
+          '<p class="about-lead">' + t.about.lead + '</p>' +
+          '<p class="about-bio">' + t.about.bio + '</p>' +
+          '<div class="about-block"><h3>' + t.about.capsTitle + '</h3><div class="about-caps">' +
+            t.about.caps.map(function (c) { return '<span class="key">' + esc(c) + '</span>'; }).join('') +
+          '</div></div>' +
+          '<div class="about-block"><h3>' + t.about.toolsTitle + '</h3><p>' + t.about.tools + '</p></div>' +
+          '<div class="about-block"><h3>' + t.about.eduTitle + '</h3><p class="todo">' + t.about.edu + '</p></div>' +
+        '</div>' +
+      '</div>';
+    if (!reduced && window.gsap) {
+      el.querySelectorAll('[data-fold="true"]').forEach(function (el) { foldText(el, { duration: 0.65, stagger: 0.045 }); });
+    }
+  }
+
+  /* ================= 项目详情页 ================= */
+  function renderProject() {
+    var t = T();
+    var slug = body.getAttribute('data-slug');
+    var p = proj(slug);
+    var el = document.getElementById('project');
+    if (!p) { el.innerHTML = '<p class="todo">TODO · Project not found</p>'; return; }
+    var c = cat(p.category);
+
+    var meta =
+      '<dl class="pj-meta reveal">' +
+        '<div><dt>' + t.labels.date + '</dt><dd>' + maybeTodo(p.date) + '</dd></div>' +
+        '<div><dt>' + t.labels.role + '</dt><dd>' + maybeTodo(p.role) + '</dd></div>' +
+        (p.tools ? '<div><dt>' + t.labels.tools + '</dt><dd>' + maybeTodo(p.tools) + '</dd></div>' : '') +
+        '<div><dt>' + t.labels.keywords + '</dt><dd>' + p.keywords[lang].join(' · ') + '</dd></div>' +
+      '</dl>';
+
+    var outline = '<section class="pj-section"><h2 class="pj-h2 reveal">' + t.labels.outline + ' — ' + (p.tier === 'A' ? 'FULL CASE' : 'COMPACT CASE') + '</h2>' +
+      '<ol class="pj-outline">' + p.sections.map(function (s, i) {
+        return '<li class="reveal" data-delay="' + Math.min(i * 40, 240) + '"><span class="idx">' + String(i + 1).padStart(2, '0') + '</span><span>' + esc(txt(s)) + '</span></li>';
+      }).join('') + '</ol></section>';
+
+    var boards = '<section class="pj-section"><h2 class="pj-h2 reveal">' + t.labels.fullBoard + '</h2>' +
+      p.boards.map(function (b, idx) {
+        var lazy = idx > 0 ? ' loading="lazy"' : '';
+        return '<figure class="pj-board reveal"><img src="' + base + encodeURI(b) + '" alt="' + esc(txt(p.title)) + '" decoding="async"' + lazy + '></figure>';
+      }).join('') + '</section>';
+
+    var extraSection = '';
+    if (slug === 'huiboyuntong' && p.videos && p.videos.length) {
+      extraSection = '<section class="pj-section"><div class="pj-video-grid">' +
+        p.videos.map(function(v) {
+          return '<div class="pj-video-item reveal">' +
+            '<video src="' + base + encodeURI(v.src) + '" poster="' + base + encodeURI(v.poster) + '" muted autoplay loop playsinline preload="metadata"></video>' +
+            '<span class="pj-video-label">' + esc(txt(v.title)) + '</span>' +
+          '</div>';
+        }).join('') +
+      '</div></section>';
+    }
+
+    var idx = D.PROJECTS.indexOf(p);
+    var next = D.PROJECTS[(idx + 1) % D.PROJECTS.length];
+    var nav =
+      '<div class="pj-nav reveal">' +
+        '<a class="work-link" href="' + base + 'index.html">' + t.labels.backHome + '</a>' +
+        '<a class="pj-next" href="' + next.slug + '.html"><small>' + t.labels.nextProject + '</small>' + esc(txt(next.title)) + ' ↗</a>' +
+      '</div>';
+
+    var titleHTML = esc(txt(p.title));
+    var foldAttr = ' data-fold="true"';
+    if (slug === 'meow-coffee') {
+      titleHTML = '<span class="pj-title-line">猫咖啡 MEOW</span><span class="pj-title-line">COFFEE</span>';
+      foldAttr = '';
+    }
+
+    el.innerHTML =
+      '<header class="pj-hero">' +
+        '<span class="pj-num reveal" style="color:' + c.accent + '">' + p.num + ' — ' + esc(txt(c.name)) + '</span>' +
+        '<h1 class="pj-title reveal" data-delay="80"' + foldAttr + '>' + titleHTML + '</h1>' +
+        '<p class="pj-sub reveal" data-delay="140">' + esc(txt(p.subtitle)) + '</p>' +
+        '<p class="pj-value reveal" data-delay="200">' + esc(txt(p.value)) + '</p>' +
+        meta +
+      '</header>' +
+      outline + boards + extraSection + nav;
+
+    document.title = txt(p.title) + ' — Jiang Yishan';
+
+    if (!reduced && window.gsap) {
+      var titleEl = el.querySelector('[data-fold="true"]');
+      if (titleEl) foldText(titleEl, { duration: 0.65, stagger: 0.04 });
+    }
+  }
+
+  /* ---------- 启动 ---------- */
+  renderChrome();
+  if (page === 'home') renderHome();
+  else if (page === 'archive') renderArchive();
+  else if (page === 'about') renderAbout();
+  else if (page === 'project') renderProject();
+  observeReveals();
+  initSplashCursor();
+})();
+
+</script>
 </body>
 </html>
